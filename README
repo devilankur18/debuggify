@@ -1,1 +1,10 @@
-This is a Javascript Debugging Library
+This is a Javascript Debugging Library.
+
+Features:
+Single Time init even on multiple inclusion
+Differnt type of messages -log,warning,error,exection
+Attach a object inside closure to global space for accessing through console
+overriding logging functions capability
+multiple templates of messages to be used
+log stating and end of a function
+stack dump 
