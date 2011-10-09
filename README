@@ -2,7 +2,7 @@ This is a Javascript Debugging Library.
 
 Features:
 Single Time init even on multiple inclusion
-Differnt type of messages -log,warning,error,exection
+Different type of messages -log,warning,error,exception,assert
 Attach a object inside closure to global space for accessing through console
 overriding logging functions capability
 multiple templates of messages to be used
