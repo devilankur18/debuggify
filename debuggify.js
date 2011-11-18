@@ -17,49 +17,117 @@ String.prototype.format = function() {
 
 var debuggify = (function(){
 
-var d;    
-var enabled = false;
-var config = {
-	template : " module:{0} {1}"
-}
-
-function init(){
-    if(enabled){
-		return
+	var DEFAULT = {
+		l : false,	//log
+		w : false, 	//warning
+		e : true,	//error
+		x : true,	//exception
+		a : true,	//assert
+		d : false	//dump
 	}
-}
-
-function log(msg){
-	console.log(config.template.format("log ",msg))
-}
-function warning(msg){
 	
-}
-function error(msg){
+	//Current settings
+	var config = {};
+	var ret = {};
+	var enabled = false;
+	// var config = {
+		// template : " module:{0} {1}"
+	// }
 	
-}
-function execption(msg){
-	
-}
-function assert(msg){
+	function init(o){
+	 	config = extend(config,DEFAULT,o);
 		
-}
+		for(var i = 0; i < config.length; i++){
+			console.log(i);
+		}
+		
+		return {
+			log : log,
+			error :log,
+			warning :log,
+			execption :log,
+			assert : log
+		}
+	}
+	
+	
+	
+	function log(msg){
+		// console.log(config.template.format("log ",msg))
+		console.log(msg);
+	}
+	
+	return function(){
+		
+		return{
+			__init : init
+		};
+	};
+	
+	//Borrowed from jquery.extend
+	function extend(){
+		
+		var options, name, src, copy, copyIsArray, clone,
+		target = arguments[0] || {},
+		i = 1,
+		length = arguments.length,
+		deep = false;
 
-return{
-	log : log,
-	error :error,
-	warning :warning,
-	execption :execption,
-	assert : assert
-}
+		// Handle a deep copy situation
+		if ( typeof target === "boolean" ) {
+			deep = target;
+			target = arguments[1] || {};
+			// skip the boolean and the target
+			i = 2;
+		}
+	
+		// Handle case when target is a string or something (possible in deep copy)
+		if ( typeof target !== "object" && !jQuery.isFunction(target) ) {
+			target = {};
+		}
+	
+		// extend jQuery itself if only one argument is passed
+		if ( length === i ) {
+			target = this;
+			--i;
+		}
+	
+		for ( ; i < length; i++ ) {
+			// Only deal with non-null/undefined values
+			if ( (options = arguments[ i ]) != null ) {
+				// Extend the base object
+				for ( name in options ) {
+					src = target[ name ];
+					copy = options[ name ];
+	
+					// Prevent never-ending loop
+					if ( target === copy ) {
+						continue;
+					}
+	
+					// Recurse if we're merging plain objects or arrays
+					if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
+						if ( copyIsArray ) {
+							copyIsArray = false;
+							clone = src && jQuery.isArray(src) ? src : [];
+	
+						} else {
+							clone = src && jQuery.isPlainObject(src) ? src : {};
+						}
+	
+						// Never move original objects, clone them
+						target[ name ] = jQuery.extend( deep, clone, copy );
+	
+					// Don't bring in undefined values
+					} else if ( copy !== undefined ) {
+						target[ name ] = copy;
+					}
+				}
+			}
+		}
+	
+		// Return the modified object
+		return target;
+	}
 
 })();
-
-
-//Application
-var d = debuggify;
-d.log("This a log message");
-d.error("This a error message");
-d.warning("This a warning message");
-d.execption("This a exception message");
-d.assert("this is a assert message");
