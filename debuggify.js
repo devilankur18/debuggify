@@ -4,16 +4,7 @@
  */
 
 
-/*Extending the string to support the format function*/
-String.prototype.format = function() {
-  var args = arguments;
-  return this.replace(/{(\d+)}/g, function(match, number) {
-    return typeof args[number] != 'undefined'
-      ? args[number]
-      : '{' + number + '}'
-    ;
-  });
-};
+
 
 var debuggify = (function(){
 
@@ -64,6 +55,32 @@ var debuggify = (function(){
 		};
 	};
 	
+	
+	/*Extending the string to support the format function*/
+	String.prototype.format = function() {
+	  var args = arguments;
+	  return this.replace(/{(\d+)}/g, function(match, number) {
+	    return typeof args[number] != 'undefined'
+	      ? args[number]
+	      : '{' + number + '}'
+	    ;
+	  });
+	};
+	
+	
+	function mysprintf(){
+		console.log(arguments);
+		var str = arguments[0];
+		var args = Array.prototype.slice.call(arguments);
+		var args = args.slice(1);
+		return str.replace(/{(\d+)}/g, function(match, number) {
+	    return typeof args[number] != 'undefined'
+	      ? args[number]
+	      : '{' + number + '}'
+	    ;
+	  });
+	}
+	console.log(mysprintf("this is {1} {0}", "Zero" , "One" ));
 	//Borrowed from jquery.extend
 	function extend(){
 		

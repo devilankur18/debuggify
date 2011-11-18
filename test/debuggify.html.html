@@ -6,7 +6,10 @@
 	
 
 <script type="text/javascript">
-	//Application
+(function(){
+	//Application Namespace
+	
+	//Create a object
 	var D = new debuggify;
 	console.log(D);
 	
@@ -26,7 +29,9 @@
 	d.warning("This a warning message");
 	d.execption("This a exception message");
 	d.assert("this is a assert message");
+})();
 
+console.log(mysprintf("this is {1} {0}", "Zero" , "One" ));
 </script>	
 
 	
