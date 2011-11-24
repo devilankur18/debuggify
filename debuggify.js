@@ -1,14 +1,11 @@
 /* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Debuggify
+ * @Author Ankur Agarwal
  */
+var debuggify = debuggify && console.log();
+var debuggify = debuggify || (function(){
 
-
-
-
-var debuggify = (function(){
-
-	var DEFAULT = {
+        var DEFAULT = {
 		l : false,	//log
 		w : false, 	//warning
 		e : true,	//error
@@ -50,12 +47,17 @@ var debuggify = (function(){
 	
 	return function(){
 		
+		test();
 		return{
 			__init : init
 		};
 	};
 	
 	
+	function test(){
+		var s = mysprintf("this is {1} {0}", "Zero" , "One" )
+		console.log(s);
+	}
 	/*Extending the string to support the format function*/
 	String.prototype.format = function() {
 	  var args = arguments;
@@ -69,10 +71,10 @@ var debuggify = (function(){
 	
 	
 	function mysprintf(){
-		console.log(arguments);
+		
 		var str = arguments[0];
-		var args = Array.prototype.slice.call(arguments);
-		var args = args.slice(1);
+		var args = Array.prototype.slice.call(arguments,1);
+		
 		return str.replace(/{(\d+)}/g, function(match, number) {
 	    return typeof args[number] != 'undefined'
 	      ? args[number]
@@ -80,7 +82,7 @@ var debuggify = (function(){
 	    ;
 	  });
 	}
-	console.log(mysprintf("this is {1} {0}", "Zero" , "One" ));
+	
 	//Borrowed from jquery.extend
 	function extend(){
 		
