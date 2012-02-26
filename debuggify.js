@@ -5,19 +5,20 @@
 
 var Debuggify = Debuggify || (function(w,d){
     
-    //Library version
+    // Library version
     var version = "0.0.1"
+    var apiVersion = 1;
     
-    //Tracking ID
-    var id = 123456;
+    // Application ID
+    var appId = 123456;
     
-    //UserAgent
+    // UserAgent 
     var ua; //TODO: Implement Useragent
     
-    //Cookies
+    // Cookies
     var cookie; //TODO: Generate cookie For tracking unique user
     
-    //Default settings
+    // Default settings
 //    var defaults = {
 //          l : false 	//log
 //        , w : false     //warning
@@ -27,8 +28,7 @@ var Debuggify = Debuggify || (function(w,d){
 //        , d : false     //dump
 //    }
 
-    
-    
+    // Required jQuery features
     var $ = (function() {
 
         var $ = function( selector, context ) {
@@ -107,7 +107,7 @@ var Debuggify = Debuggify || (function(w,d){
             // Return the modified object
             return target;
         };
-         console.log($);
+//         console.log($);
         //Borrowed from jquery.extend
         $.extend({
             each: function ( object, callback, args ) {
@@ -156,7 +156,6 @@ var Debuggify = Debuggify || (function(w,d){
             }
 
             , isFunction: function( obj ) {
-                console.log(obj);
                 return $.type(obj) === "function";
             }
 
@@ -201,6 +200,8 @@ var Debuggify = Debuggify || (function(w,d){
 
                 return key === undefined || hasOwn.call( obj, key );
             }
+            
+            // Generate a string like sprintf in C
             , mysprintf: function () {
 
                 var str = arguments[0];
@@ -288,30 +289,31 @@ var Debuggify = Debuggify || (function(w,d){
     })();
     
     console.log($);
-    var defaults = {
-          log: false 	//log
-        , warning: false     //warning
-        , error: true      //error
-        , exception: true      //exception
-        , assert: true      //assert
-        , dump: false     //dump
+    var defaults = {        
+          log: false            // log
+        , warning: false        // warning
+        , error: true           // error
+        , exception: true       // exception
+        , assert: true          // assert
+        , dump: false           // dump
     }
     
-    //Main Functions provided to users
+    var messageTypes = ['log','warning', 'error', 'exception', 'assert', 'dump'];
+    
+    // Main Functions provided to users
     var F = {};
     
-    //Empty function
+    // Empty function
     var f = function(){};
     
-    //Storage
+    // Storage
     var D;
     
-    //Current settings
+    // Current settings
     var config = {};
     var ret = {};
     var enabled = false;
     
-
     var data = {};
     
     function init (o) {
@@ -327,7 +329,24 @@ var Debuggify = Debuggify || (function(w,d){
     }
     
     function genericFunc(funcName){
-        return function (){
+        var type = funcName;
+        
+        var message = {
+            a: appId
+//            , ua:                     // Sent in http Headers
+//            , ip:                     // Got from request
+            
+            , l: 0                      // Line No
+            , f: ''                     // Filename
+            , m: ''                     // Message
+            , t: 0                      // Type of message DEFAULT log
+//            , url: ''                 // Sent in http Headers as Refferer
+//            , c: ''                   // Sent in http Header
+//            , ts:                     // generate at server
+            , v: apiVersion
+        };
+        
+        return function (m){
             console.log('Name of the function is ' + funcName );
         }
     }
@@ -367,12 +386,12 @@ var Debuggify = Debuggify || (function(w,d){
      */
     function processAccumulateData(){
         
-        //Get the commands which are already made by the user
+        // Get the commands which are already made by the user
         var D = w['_debuggify'] || [];
         
         if(D.isObject) return false;
         
-        //Process the already accumuated data
+        // Process the already accumuated data
         for(var i = 0; i < D.length; i++){
             console.log("Processing Data");
             console.log(D[i]);
@@ -400,17 +419,17 @@ var Debuggify = Debuggify || (function(w,d){
     }
     
     function processCmd(cmd){
-        //Checking for Array
+        // Checking for Array
         if(typeof cmd === 'object'){ //TODO: Update check for array
-            //Get the function name which is called
+            // Get the function name which is called
             var func = cmd[0],
-            //Get the function argunments
+            // Get the function argunments
                 args = Array.prototype.slice.call(cmd,1);
             if(typeof F[func] === "function"){
 
-                //Execute the functions
+                // Execute the functions
                 F[func].call(this,args)
-
+                sendDataToServer(args);
             }else{
 
                 config[func] && data.debugData.push(D[i])
@@ -418,14 +437,15 @@ var Debuggify = Debuggify || (function(w,d){
             }
             
         }else{
-            //Handle Invalid Data
+            // Handle Invalid Data
             throw "Invalid Object";
             console.log(cmd);
         }
     }
     
     function sendDataToServer(data){
-        
+        console.log(data);
+        console.log($.param(data));
     }
     
     function arrayToObject () {
