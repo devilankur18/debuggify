@@ -1,0 +1,32 @@
+<html>
+<head>
+<script type="text/javascript" src="../debuggify.js"></script>
+</head>
+<body>
+	
+<script type="text/javascript">
+
+    var _debuggify = _debuggify || [];
+    
+    (function(){
+        
+        //Application Namespace    
+        var d = _debuggify;
+        
+        d.push(["log", "This a log message"]);
+        d.push(["error", "This a error message"]);
+        d.push(["waning", "This a warning message"]);
+        d.push(["exception","This a exception message"]);
+        d.push(["assert","This is a assert message"]);
+        d.push(["dump","This is a dump message"]);
+        
+    })()
+
+//    console.log(_debuggify);
+    
+</script>
+<script type="text/javascript" src="../debuggify.js"></script>
+</body>
+
+</html>
+
