@@ -371,11 +371,28 @@ var Debuggify = Debuggify || (function(w,d){
         }
     }
     
+    function registerForErrors(){
+        var fe = w.onerror;
+        
+        w.onerror = function(e){
+            
+            console.log(e,arguments);
+            if(fe && typeof fe == 'function'){
+                fe.apply(this, arguments);
+            }
+            
+            // TO propage error for other functions to catch
+            return true;
+        }
+        
+        
+    }
+    
     function load (o) {
         
         //Get the default config with the user config
         config = $.extend({},defaults,o);
-        
+        registerForErrors();
         initFunctions();
         
         //Tracking object to send to the server

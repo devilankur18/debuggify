@@ -4,6 +4,7 @@
 </head>
 <body>
 	
+    
 <script type="text/javascript">
 
     var _debuggify = _debuggify || [];
@@ -24,8 +25,22 @@
 
 //    console.log(_debuggify);
     
+    
+function throwError(){
+    throw 'Fuck Error Happens';
+}
+function getImage(){
+    var img = document.createElement('img');
+    img.src = 'http://google.com/aa.gif?_=' + Math.round(+new Date()) // + '&_=' + Math.round(+new Date()) + count;;
+}
 </script>
+
+<div onclick="throwError();"> Throw Error</div>
+
+<div onclick="getImage();"> Get Image 404</div>
+<div onclick="throwError();"> Throw Error</div>
 <!--<script type="text/javascript" src="../debuggify.js"></script>-->
+<script type="text/javascript" src="404.js"></script>
 </body>
 
 </html>
