@@ -12,6 +12,10 @@ var Debuggify = Debuggify || (function(w,d){
     // Application ID
     var appId = 123456;
     
+    // Tracking host
+    var trackHost = 'localhost:8000'
+    var hostUrl = 'http://' + trackHost;
+    
     // UserAgent 
     var ua; //TODO: Implement Useragent
     
@@ -231,14 +235,14 @@ var Debuggify = Debuggify || (function(w,d){
                             // a server error. Possible fixes are to modify rack's
                             // deserialization algorithm or to provide an option or flag
                             // to force array serialization to be shallow.
-                            buildParams( prefix + "[" + ( typeof v === "object" || $.isArray(v) ? i : "" ) + "]", v, traditional, add );
+                            $.buildParams( prefix + "[" + ( typeof v === "object" || $.isArray(v) ? i : "" ) + "]", v, traditional, add );
                         }
                     });
 
                 } else if ( !traditional && obj != null && typeof obj === "object" ) {
                     // Serialize object item.
                     for ( var name in obj ) {
-                        buildParams( prefix + "[" + name + "]", obj[ name ], traditional, add );
+                        $.buildParams( prefix + "[" + name + "]", obj[ name ], traditional, add );
                     }
 
                 } else {
@@ -270,9 +274,9 @@ var Debuggify = Debuggify || (function(w,d){
                 } else {
                     // If traditional, encode the "old" way (the way 1.3.2 or older
                     // did it), otherwise encode params recursively.
-    //                for ( var prefix in a ) {
-    //                    buildParams( prefix, a[ prefix ], traditional, add );
-    //                }
+                    for ( var prefix in a ) {
+                        $.buildParams( prefix, a[ prefix ], traditional, add );
+                    }
                 }
 
                 // Return the resulting serialization
@@ -289,7 +293,7 @@ var Debuggify = Debuggify || (function(w,d){
     })();
     
     console.log($);
-    var defaults = {        
+    var defaults = {
           log: false            // log
         , warning: false        // warning
         , error: true           // error
@@ -328,26 +332,32 @@ var Debuggify = Debuggify || (function(w,d){
         }
     }
     
+    var messageDefaults = {
+        a: appId
+//        , ua:                     // Sent in http Headers
+//        , ip:                     // Got from request
+
+        , l: 120                      // Line No
+        , f: 'debuggify.js'                     // Filename
+        , m: ''                     // Message
+        , t: 0                      // Type of message DEFAULT log
+//        , url: ''                 // Sent in http Headers as Refferer
+//        , c: ''                   // Sent in http Header
+//        , ts:                     // generate at server
+        , v: apiVersion
+    };
+    
     function genericFunc(funcName){
-        var type = funcName;
-        
-        var message = {
-            a: appId
-//            , ua:                     // Sent in http Headers
-//            , ip:                     // Got from request
-            
-            , l: 0                      // Line No
-            , f: ''                     // Filename
-            , m: ''                     // Message
-            , t: 0                      // Type of message DEFAULT log
-//            , url: ''                 // Sent in http Headers as Refferer
-//            , c: ''                   // Sent in http Header
-//            , ts:                     // generate at server
-            , v: apiVersion
-        };
-        
+        var msg = $.extend({},messageDefaults, {
+            m:funcName
+        });
         return function (m){
             console.log('Name of the function is ' + funcName );
+            l = m.length;
+            for(var i = 0; i < l; i++){
+                msg.m = m[i];
+                sendDataToServer(msg);
+            }
         }
     }
     
@@ -369,12 +379,12 @@ var Debuggify = Debuggify || (function(w,d){
         initFunctions();
         
         //Tracking object to send to the server
-        data = {
-            id : id
-            , ua : ua
-            , cookie : cookie
-            , debugData : []
-        }
+//        data = {
+//            id : id
+//            , ua : ua
+//            , cookie : cookie
+//            , debugData : []
+//        }
         
         processAccumulateData();
         
@@ -392,7 +402,8 @@ var Debuggify = Debuggify || (function(w,d){
         if(D.isObject) return false;
         
         // Process the already accumuated data
-        for(var i = 0; i < D.length; i++){
+        var l = D.length;
+        for(var i = 0; i < l; i++){
             console.log("Processing Data");
             console.log(D[i]);
             processCmd(D[i]);
@@ -429,7 +440,7 @@ var Debuggify = Debuggify || (function(w,d){
 
                 // Execute the functions
                 F[func].call(this,args)
-                sendDataToServer(args);
+                //sendDataToServer(args);
             }else{
 
                 config[func] && data.debugData.push(D[i])
@@ -443,9 +454,9 @@ var Debuggify = Debuggify || (function(w,d){
         }
     }
     
-    function sendDataToServer(data){
-        console.log(data);
-        console.log($.param(data));
+    function sendDataToServer(msg){
+        var img = d.createElement('img');
+        img.src = hostUrl + '?' +  $.param(msg) // + '&_=' + Math.round(+new Date()) + count;;
     }
     
     function arrayToObject () {
