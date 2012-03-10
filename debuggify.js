@@ -15,6 +15,7 @@ var Debuggify = Debuggify || (function(w,d){
     // Tracking host
     var trackHost = 'localhost:8000'
     var hostUrl = 'http://' + trackHost;
+    var postUrl = 'http://' + trackHost;
     
     // UserAgent 
     var ua; //TODO: Implement Useragent
@@ -353,11 +354,13 @@ var Debuggify = Debuggify || (function(w,d){
         });
         return function (m){
             console.log('Name of the function is ' + funcName );
-            l = m.length;
-            for(var i = 0; i < l; i++){
-                msg.m = m[i];
+            msg.m = m;
+//            l = m.length;
+//            for(var i = 0; i < l; i++){
+//                msg.m = m[i];
                 sendDataToServer(msg);
-            }
+                jankyPost(msg)
+//            }
         }
     }
     
@@ -375,19 +378,18 @@ var Debuggify = Debuggify || (function(w,d){
         var fe = w.onerror;
         
         w.onerror = function(e){
-            
             console.log(e,arguments);
+            
+            F.error(arguments[0]);
+            
             if(fe && typeof fe == 'function'){
                 fe.apply(this, arguments);
             }
-            
-            // TO propage error for other functions to catch
+            // TO propogate error for other functions to catch
             return true;
         }
-        
-        
     }
-    
+        
     function load (o) {
         
         //Get the default config with the user config
@@ -473,8 +475,44 @@ var Debuggify = Debuggify || (function(w,d){
     
     function sendDataToServer(msg){
         var img = d.createElement('img');
-        img.src = hostUrl + '?' +  $.param(msg) // + '&_=' + Math.round(+new Date()) + count;;
+        img.src = hostUrl + '?' +  $.param(msg) // + '&_=' + Math.round(+new Date()) + count;
     }
+    
+    //Reference from janky.post, copyright(c) 2011 Thomas Rampelberg <thomas@saunter.org>
+    function jankyPost (msg) {
+        _form(function(iframe, form) {
+            form.setAttribute("action", postUrl);
+            form.setAttribute("method", "post");
+            _input(iframe, form, msg);
+            form.submit();
+            setTimeout(function(){
+                d.body.removeChild(iframe);              
+            }, 3000);
+        });
+    };
+    
+    //Reference  from janky.post, copyright(c) 2011 Thomas Rampelberg <thomas@saunter.org>
+    function _form (cb){
+        var iframe = d.createElement("iframe");
+        d.body.appendChild(iframe);
+        iframe.style.display = "none";
+        setTimeout(function() {
+          var form = iframe.contentWindow.document.createElement("form");
+          iframe.contentWindow.document.body.appendChild(form);
+          cb(iframe, form);
+        }, 0);
+    }
+    //Reference  from janky.post, copyright(c) 2011 Thomas Rampelberg <thomas@saunter.org>
+    function _input (iframe, form, data) {
+        //var l = data.length;
+        for(var i in data){
+            var inp = iframe.contentWindow.document.createElement("input");
+            inp.setAttribute("type", "hidden");
+            inp.setAttribute("name", i);
+            inp.value = data[i];
+            form.appendChild(inp);
+        }
+    };
     
     function arrayToObject () {
         
