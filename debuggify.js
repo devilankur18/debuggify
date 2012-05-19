@@ -372,6 +372,11 @@ var Debuggify = Debuggify || (function(w,d){
         for (var i in config) {
             F[ i ] = !config[i] ? f : genericFunc(i);
         }
+        
+        F['_setAccount'] = function (acc){
+            // Update the appId if already not set
+            appId = acc || appId || false;
+        };
     }
     
     function registerForErrors(){

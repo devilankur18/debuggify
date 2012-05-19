@@ -1,18 +1,24 @@
 <html>
 <head>
+
+<!-- Include the script -->
 <script type="text/javascript" src="../debuggify.js"></script>
+
 </head>
 <body>
 	
     
 <script type="text/javascript">
 
+    // Initialize the variable if already not initialized
     var _debuggify = _debuggify || [];
     
     (function(){
         
         //Application Namespace    
         var d = _debuggify;
+        
+        d.push(['_setAccount', '12345678901234567890'])
         
         d.push(["log", "This a log message"]);
         d.push(["error", "This a error message"]);
